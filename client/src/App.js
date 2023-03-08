@@ -21,9 +21,9 @@ function App() {
       {/* <Route path='/' element={ <Home /> } /> */}
       <Route path='/' element={user ? <Home /> : <Navigate to='/login' />} />
         <Route path='/login' element={user ? <Navigate to='/' /> : <Login />} />
-      <Route path='/dashboard' element={ <Dashboard /> } />
-      <Route path='/development' element={ <Development /> } />
-      <Route path='/design' element={ <Design /> } />
+      <Route exact path='/dashboard' element={ <Dashboard /> } />
+      <Route exact path='/development' element={ <Development /> } />
+      <Route exact path='/design' element={ <Design /> } />
       </Routes>
     </BrowserRouter>
   );

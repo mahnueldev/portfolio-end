@@ -10,19 +10,19 @@ import {
 const sideNav = [
   {
     id: uuidv4(),
-    label: 'Dashboard',
+    label: 'dashboard',
     icon: <DesktopOutlined />,
     to: '/',
   },
   {
     id: uuidv4(),
-    label: 'Development',
+    label: 'development',
     icon: <PieChartOutlined />,
     to: '/development',
   },
   {
     id: uuidv4(),
-    label: 'Design',
+    label: 'design',
     icon: <TeamOutlined/>,
     to: '/design',
   },

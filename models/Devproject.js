@@ -11,9 +11,11 @@ const DevprojectSchema = mongoose.Schema({
   desc: {
     type: String,
   },
+  filename: {
+    type: String,
+  },
   url: {
     type: String,
-    required: false,
   },
   format: {
     type: String,

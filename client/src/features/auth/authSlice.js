@@ -21,7 +21,11 @@ export const clearError = createAction('auth/clearError');
 export const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: null,
+    user: {
+      id: 1,
+      name: 'John Doe',
+      email: 'johndoe@example.com',
+    },
     loading: false,
     error: null,
   },

@@ -1,16 +1,48 @@
 import React, { useState } from 'react';
 import { PlusOutlined } from '@ant-design/icons';
-import { Form, Input, Button, Select, Checkbox, Upload } from 'antd';
+import { Form, Input, Button, Select, Checkbox, Upload, Alert, message } from 'antd';
+import { useDispatch, useSelector } from 'react-redux';
+import { createDevProject } from '../features/devproject/devprojectSlice';
 
 const { TextArea } = Input;
-const { Item } = Form;
 const Development = () => {
+  const dispatch = useDispatch();
+  const { loading, error } = useSelector((state) => state.devprojects);
   const [selectedStacks, setSelectedStacks] = useState([]);
 
   const handleStacksChange = (selectedValues) => {
     setSelectedStacks(selectedValues);
   };
-
+  const handleFormSubmit = async (values) => {
+    try {
+      const { id, name, desc, link, github, status, type, stacks, file } = values;
+  
+      const formData = new FormData();
+      formData.append('id', id);
+      formData.append('name', name);
+      formData.append('desc', desc);
+      formData.append('link', link);
+      formData.append('github', github);
+      formData.append('status', status);
+      formData.append('type', type);
+      formData.append('stacks', stacks);
+      formData.append('file', file[0].originFileObj);
+  
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      };
+  
+      await dispatch(createDevProject({ formData, config })).unwrap();
+    } catch (err) {
+      console.error(err);
+    }
+  };
+  const onFinishFailed = (errorInfo) => {
+    console.log('Failed:', errorInfo);
+    message.error('Form submission failed. Please check the form and try again.');
+  };
   return (
     <>
       <Form
@@ -18,35 +50,50 @@ const Development = () => {
         wrapperCol={{ span: 14 }}
         layout='horizontal'
         style={{ maxWidth: 600 }}
+        onFinish={handleFormSubmit} // Add onFinish callback to Form
+        onFinishFailed={onFinishFailed}
       >
-        <Form.Item label='Name'>
+        {error && <Alert className='mb-4' message={error} type='error' />}
+        <Form.Item label='Name' name='name'>
           <Input />
         </Form.Item>
-        <Form.Item label='Description'>
+        <Form.Item label='Description' name='desc'>
           <TextArea rows={4} />
         </Form.Item>
 
-        <Form.Item label='Link'>
+        <Form.Item label='Link to site' name='link'>
           <Input />
         </Form.Item>
-        <Form.Item label='Status'>
+        <Form.Item label='Github' name='github'>
+          <Input />
+        </Form.Item>
+        <Form.Item label='Status' name='status'>
           <Select>
-            <Select.Option value='demo'>false</Select.Option>
-            <Select.Option value='demo'>true</Select.Option>
+            <Select.Option value='false' name='status'>
+              false
+            </Select.Option>
+            <Select.Option value='true' name='status'>
+              true
+            </Select.Option>
           </Select>
         </Form.Item>
         <Form.Item label='Type'>
           <Select>
-            <Select.Option value='demo'>Web</Select.Option>
-            <Select.Option value='demo'>Mobile</Select.Option>
+            <Select.Option value='Web' name='type'>
+              Web
+            </Select.Option>
+            <Select.Option value='Mobile' name='type'>
+              Mobile
+            </Select.Option>
           </Select>
         </Form.Item>
 
-        <Item label='Stacks'>
+        <Form.Item label='Stacks' name='stacks'>
           <Checkbox.Group
             options={[
               { label: 'HTML', value: 'html' },
               { label: 'CSS', value: 'css' },
+              { label: 'TailwindCSS', value: 'tailwind' },
               { label: 'Javascript', value: 'javascript' },
               { label: 'React', value: 'react' },
               { label: 'ReactNative', value: 'react-native' },
@@ -54,7 +101,6 @@ const Development = () => {
               { label: 'NextJS', value: 'nextjs' },
               { label: 'NodeJS', value: 'nodejs' },
               { label: 'Firebase', value: 'firebase' },
-              { label: 'NodeJS', value: 'nodejs' },
               { label: 'MongoDB', value: 'mongodb' },
               { label: 'MySQL', value: 'mysql' },
               { label: 'wordpress', value: 'wordpress' },
@@ -69,10 +115,15 @@ const Development = () => {
               </Checkbox>
             )}
           </Checkbox.Group>
-        </Item>
+        </Form.Item>
 
-        <Form.Item label='Upload' valuePropName='fileList'>
-          <Upload action='/upload.do' listType='picture-card' maxCount={1}>
+        <Form.Item
+          name='file'
+          label='File'
+          valuePropName='file'
+          getValueFromEvent={(e) => e.fileList}
+        >
+          <Upload listType='picture-card' maxCount={1}>
             <div>
               <PlusOutlined />
               <div style={{ marginTop: 8 }}>Upload</div>
@@ -83,7 +134,7 @@ const Development = () => {
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
           <Button
             type='primary'
-            // loading={loading}
+            loading={loading}
             htmlType='submit'
             className='bg-blue-600'
           >

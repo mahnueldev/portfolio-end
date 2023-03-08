@@ -18,6 +18,7 @@ router.post('/', singleUpload('file'), async (req, res) => {
     const newDevproject = new Devproject({
       id: req.body.id,
       name: req.body.name,
+      filename: file.filename,
       desc: req.body.desc,
       url: baseUrl + 'uploads/' + file.filename,
       link: req.body.link,
@@ -58,13 +59,13 @@ router.put('/devprojects/:id', async (req, res) => {
     );
 
     if (!updatedProject) {
-      return res.status(404).json({ message: 'Devproject not found' });
+      return res.status(404).json({ msg: 'Devproject not found' });
     }
 
     return res.json(updatedProject);
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ message: 'Server error' });
+    return res.status(500).json({ msg: 'Server error' });
   }
 });
 
@@ -74,7 +75,7 @@ router.get('/:id', async (req, res) => {
     const devProject = await Devproject.findById(req.params.id);
 
     if (!devProject) {
-      return res.status(404).json({ message: 'Dev project not found' });
+      return res.status(404).json({ msg: 'Dev project not found' });
     }
 
     res.json(devProject);
@@ -111,7 +112,7 @@ router.delete('/:id', async (req, res) => {
     await Devproject.findByIdAndRemove(id);
 
     // Delete the file from the uploads folder
-    const filePath = path.join(__dirname, '..', 'uploads', devproject.name);
+    const filePath = path.join(__dirname, '..', 'uploads', devproject.filename);
     fs.unlinkSync(filePath);
 
     res.json({ msg: 'Dev project and file deleted' });
