@@ -99,17 +99,16 @@ router.get('/', async (req, res) => {
 // Delete single project
 router.delete('/:id', async (req, res) => {
   try {
-    const id = req.params.id;
+    const devproject = await Devproject.findById(req.params.id);
 
     // Find the dev project by ID
-    const devproject = await Devproject.findById(id);
 
-    if (!devproject) {
+    if (!devproject.toString()) {
       return res.status(404).json({ msg: 'Dev project not found' });
     }
 
     // Delete the dev project from the database
-    await Devproject.findByIdAndRemove(id);
+    await Devproject.findByIdAndRemove(req.params.id);
 
     // Delete the file from the uploads folder
     const filePath = path.join(__dirname, '..', 'uploads', devproject.filename);

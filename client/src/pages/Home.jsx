@@ -37,7 +37,7 @@ const Home = () => {
   return (
     <Layout style={{ minHeight: '100vh' }}>
       
-      <Sider collapsible collapsed={collapsed} onCollapse={(value) => setCollapsed(value)} >
+      <Sider collapsible collapsed={collapsed}  onCollapse={(value) => setCollapsed(value)} >
         <div style={{ position: 'fixed', left: 0, top: 0, bottom: 0 }}>
        <div className='flex items-center justify-center' >
         <img src={logo} alt='' className='w-16 p-4 '/></div>

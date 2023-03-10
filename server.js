@@ -7,6 +7,8 @@ require('dotenv').config();
 const PORT = process.env.PORT || 8080;
 const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
+const logger = require('./middleware/logger');
+const {accessLogMiddleware, errorLogMiddleware } = require('./middleware/morganWare');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -15,6 +17,12 @@ app.use('/uploads', express.static('uploads'));
 connectDB();
 // Cross Origin Resource Sharing
 app.use(cors(corsOptions));
+
+// Use HTTP request logger
+app.use(accessLogMiddleware);
+app.use(errorLogMiddleware);
+// app.use(logger.notFound);
+// app.use(logger.errorHandler);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

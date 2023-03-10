@@ -1,4 +1,4 @@
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+import { createAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const url = 'http://localhost:8080';
@@ -14,22 +14,29 @@ export const getDevProjects = createAsyncThunk(
 
 // Create a new dev project
 export const createDevProject = createAsyncThunk(
-    'devprojects/addDevProject',
-    async ({ formData, config }) => {
-      const { data } = await axios.post(
-        `${url}/api/devprojects`,
-        formData,
-        config
-      );
-      return data;
-    }
-  );
-// Delete a dev project by id
+  'devprojects/addDevProject',
+  async ({ formData, config }) => {
+    const { data } = await axios.post(
+      `${url}/api/devprojects`,
+      formData,
+      config
+    );
+    return data;
+  }
+);
+
+
 export const deleteDevProjectById = createAsyncThunk(
   'devprojects/deleteDevProjectById',
-  async (id) => {
-    await axios.delete(`${url}/api/devprojects/${id}`);
-    return id;
+  async (id, thunkAPI) => {
+    console.log('Deleting dev project with ID:', id);
+    try {
+      await axios.delete(`${url}/api/devprojects/${id}`);
+      return id;
+    } catch (error) {
+      console.log(error);
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
   }
 );
 
@@ -52,15 +59,20 @@ export const updateDevProject = createAsyncThunk(
     return data;
   }
 );
-
+export const clearField = createAction('devproject/clearField');
 export const devprojectSlice = createSlice({
   name: 'devprojects',
   initialState: {
-    devprojects: null,
+    devprojects: [],
+    devproject: null,
     loading: false,
     error: null,
   },
-  reducers: {},
+  reducers: {
+    clearField: (state) => {
+      state.devproject = null;
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(getDevProjects.pending, (state) => {
@@ -81,8 +93,8 @@ export const devprojectSlice = createSlice({
       })
       .addCase(createDevProject.fulfilled, (state, action) => {
         state.loading = false;
-        state.devprojects = action.payload;
-        console.log(state.devprojects);
+        state.devproject = action.payload;
+        console.log(state.devproject);
       })
       .addCase(createDevProject.rejected, (state, action) => {
         state.loading = false;
@@ -102,6 +114,7 @@ export const devprojectSlice = createSlice({
         state.loading = false;
         state.error = action.error.msg;
       })
+     
       .addCase(deleteAllDevProjects.pending, (state) => {
         state.loading = true;
       })
@@ -133,5 +146,5 @@ export const devprojectSlice = createSlice({
       });
   },
 });
-
+// export const { clearField} = devprojectSlice.actions;
 export default devprojectSlice.reducer;
