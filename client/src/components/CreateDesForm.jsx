@@ -3,15 +3,15 @@ import { PlusOutlined } from '@ant-design/icons';
 import { Form, Input, Button, Select, Checkbox, Upload, Alert } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  createDevProject,
-  getDevProjects,
-} from '../features/projects/devprojectSlice';
+  createDesProject,
+  getDesProjects,
+} from '../features/projects/desprojectSlice';
 
 const { TextArea } = Input;
-const CreateDevForm = () => {
+const CreateDesForm = () => {
   const [form] = Form.useForm();
   const dispatch = useDispatch();
-  const { loading } = useSelector((state) => state.devprojects);
+  const { loading } = useSelector((state) => state.desprojects);
   const [selectedStacks, setSelectedStacks] = useState([]);
   const [success, setSuccess] = useState(false);
   const [failed, setFailed] = useState(false);
@@ -22,15 +22,14 @@ const CreateDevForm = () => {
 
   const handleFormSubmit = async (values) => {
     try {
-      const { name, desc, link, github, status, type, stacks, file } = values;
+      const { name, desc, link,  status,  type, stacks, file } = values;
 
       const formData = new FormData();
       formData.append('name', name);
       formData.append('desc', desc);
       formData.append('link', link);
-      formData.append('github', github);
-      formData.append('status', status);
       formData.append('type', type);
+      formData.append('status', status);
       formData.append('stacks', stacks);
       formData.append('file', file[0].originFileObj);
 
@@ -40,8 +39,8 @@ const CreateDevForm = () => {
         },
       };
 
-      await dispatch(createDevProject({ formData, config })).unwrap();
-      dispatch(getDevProjects());
+      await dispatch(createDesProject({ formData, config })).unwrap();
+      dispatch(getDesProjects());
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
@@ -80,9 +79,7 @@ const CreateDevForm = () => {
         <Form.Item label='Link to site' name='link'>
           <Input />
         </Form.Item>
-        <Form.Item label='Github' name='github'>
-          <Input />
-        </Form.Item>
+     
         <Form.Item label='Status' name='status'>
           <Select>
             <Select.Option value='false' name='status'>
@@ -95,27 +92,20 @@ const CreateDevForm = () => {
         </Form.Item>
         <Form.Item label='Type' name='type'>
           <Select>
-            <Select.Option value='web'>Web</Select.Option>
-            <Select.Option value='mobile'>Mobile</Select.Option>
+            <Select.Option value='ui'>UI</Select.Option>
+            <Select.Option value='ux'>UX</Select.Option>
+            <Select.Option value='combined'>Combined</Select.Option>
           </Select>
         </Form.Item>
 
         <Form.Item label='Stacks' name='stacks'>
           <Checkbox.Group
             options={[
-              { label: 'HTML', value: 'html' },
-              { label: 'CSS', value: 'css' },
-              { label: 'TailwindCSS', value: 'tailwind' },
-              { label: 'Javascript', value: 'javascript' },
-              { label: 'React', value: 'react' },
-              { label: 'ReactNative', value: 'react-native' },
-              { label: 'Server', value: 'server' },
-              { label: 'NextJS', value: 'nextjs' },
-              { label: 'NodeJS', value: 'nodejs' },
-              { label: 'Firebase', value: 'firebase' },
-              { label: 'MongoDB', value: 'mongodb' },
-              { label: 'MySQL', value: 'mysql' },
-              { label: 'wordpress', value: 'wordpress' },
+                { label: 'Photoshop', value: 'photoshop' },
+                { label: 'Illustrator', value: 'illustrator' },
+                { label: 'Figma', value: 'figma' },
+                { label: 'XD', value: 'xd' },
+                { label: 'AfterEffects', value: 'aftereffects' },
             ]}
             onChange={handleStacksChange}
             value={selectedStacks}
@@ -174,4 +164,4 @@ const CreateDevForm = () => {
   );
 };
 
-export default CreateDevForm;
+export default CreateDesForm;

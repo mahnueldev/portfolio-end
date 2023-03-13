@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { CreateDevForm } from '../components';
 import RenderDevProj from '../components/RenderDevProj';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteAllDevProjects } from '../features/devproject/devprojectSlice';
-import { Form, Button, Alert, Modal } from 'antd';
+import { deleteAllDevProjects } from '../features/projects/devprojectSlice';
+import { Form, Button, Modal } from 'antd';
 
 const Development = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -24,14 +24,14 @@ const Development = () => {
       <div className='w-5/6'>
         <CreateDevForm />
       </div>
-      <div className='w-5/6 flex flex-col items-center overflow-y-auto h-screen'>
+      <div className='w-5/6 flex flex-col items-center overflow-y-auto h-screen '>
         <RenderDevProj />
         {devprojects.length > 0 && (
           <Form.Item>
             <Button
               type='primary'
               loading={loading}
-              htmlType='submit'
+              
               className='bg-red-600 mt-14 flex'
               onClick={handleDelete}
             >

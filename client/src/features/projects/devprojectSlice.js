@@ -12,6 +12,7 @@ export const getDevProjects = createAsyncThunk(
   }
 );
 
+
 // Create a new dev project
 export const createDevProject = createAsyncThunk(
   'devprojects/addDevProject',
@@ -24,7 +25,6 @@ export const createDevProject = createAsyncThunk(
     return data;
   }
 );
-
 
 export const deleteDevProjectById = createAsyncThunk(
   'devprojects/deleteDevProjectById',
@@ -49,16 +49,32 @@ export const deleteAllDevProjects = createAsyncThunk(
 );
 
 // Update a dev project
+// export const updateDevProject = createAsyncThunk(
+//   'devprojects/updateDevProject',
+//   async (devproject) => {
+//     const { data } = await axios.put(
+//       `${url}/api/devprojects/${devproject.id}`,
+//       devproject
+//     );
+//     return data;
+//   }
+// );
 export const updateDevProject = createAsyncThunk(
   'devprojects/updateDevProject',
-  async (devproject) => {
-    const { data } = await axios.put(
-      `${url}/api/devprojects/${devproject.id}`,
-      devproject
-    );
-    return data;
+  async ({ id, formData }) => {
+    console.log('Editing dev project with ID:', id);
+    try {
+      const config = { headers: { 'Content-Type': 'application/json' } };
+      const response = await axios.put(`${url}/api/devprojects/${id}`, formData, config);
+      
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return error.response.data;
+    }
   }
 );
+
 export const clearField = createAction('devproject/clearField');
 export const devprojectSlice = createSlice({
   name: 'devprojects',
@@ -67,11 +83,13 @@ export const devprojectSlice = createSlice({
     devproject: null,
     loading: false,
     error: null,
+    
   },
   reducers: {
     clearField: (state) => {
       state.devproject = null;
     },
+   
   },
   extraReducers: (builder) => {
     builder
@@ -104,17 +122,20 @@ export const devprojectSlice = createSlice({
         state.loading = true;
       })
       .addCase(deleteDevProjectById.fulfilled, (state, action) => {
-        state.devprojects = state.devprojects.filter(
-          (devproject) => devproject.id !== action.payload
-        );
         state.loading = false;
+        const {
+          arg: { id },
+        } = action.meta;
+        state.devprojects = state.devprojects.filter(
+          (devproject) => devproject.id !== id
+        );
         state.error = null;
       })
       .addCase(deleteDevProjectById.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.msg;
       })
-     
+
       .addCase(deleteAllDevProjects.pending, (state) => {
         state.loading = true;
       })
@@ -130,21 +151,25 @@ export const devprojectSlice = createSlice({
       .addCase(updateDevProject.pending, (state) => {
         state.loading = true;
       })
+
       .addCase(updateDevProject.fulfilled, (state, action) => {
-        const index = state.devprojects.findIndex(
-          (devproject) => devproject.id === action.payload.id
-        );
-        if (index !== -1) {
-          state.devprojects[index] = action.payload;
-        }
         state.loading = false;
-        state.error = null;
+        console.log('action', action);
+        const {
+          arg: { id },
+        } = action.meta;
+        if (id) {
+          state.devprojects = state.devprojects.map((devproject) =>
+            devproject.id === id ? action.payload : devproject
+          );
+        }
       })
-      .addCase(updateDevProject.rejected, (state, action) => {
+       .addCase(updateDevProject.rejected, (state, action) => {
         state.loading = false;
         state.error = action.error.msg;
-      });
+      })
+    
   },
 });
-// export const { clearField} = devprojectSlice.actions;
+// export const { existingData } = devprojectSlice.actions;
 export default devprojectSlice.reducer;

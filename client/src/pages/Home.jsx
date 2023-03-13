@@ -64,7 +64,7 @@ const Home = () => {
           </Breadcrumb>
           <div style={{ padding: 24, minHeight: 360, background: '#fff' }}>{renderContent()}</div>
         </Content>
-        <Footer style={{ textAlign: 'center' }}>Ant Design ©2023 Created by Ant UED</Footer>
+        <Footer style={{ textAlign: 'center' }}>Mahnuel Portfolio ©2023 Created by Mahnuel</Footer>
       </Layout>
     </Layout>
   );

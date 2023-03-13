@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  updateDevProject,
-  getDevProjects,
-  deleteDevProjectById,
-} from '../features/projects/devprojectSlice';
+  updateDesProject,
+  getDesProjects,
+  deleteDesProjectById,
+} from '../features/projects/desprojectSlice';
 import ImageComponent from './ImageComponent';
 import PlaceHolderImage from '../assets/images/krest.png';
 import { Form, Input, Alert, Modal, Checkbox, Select } from 'antd';
 const { TextArea } = Input;
 
-const RenderDevProj = () => {
+const RenderDesProj = () => {
   const dispatch = useDispatch();
   const [success, setSuccess] = useState(false);
   const [failed, setFailed] = useState(false);
-  const { devprojects } = useSelector((state) => state.devprojects);
+  const { desprojects } = useSelector((state) => state.desprojects);
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [editingProject, setEditingProject] = useState(null);
   const [selectedStacks, setSelectedStacks] = useState([]);
@@ -25,16 +25,16 @@ const RenderDevProj = () => {
   };
 
   useEffect(() => {
-    dispatch(getDevProjects());
+    dispatch(getDesProjects());
   }, [dispatch]);
 
   // dELETE PROJECT
   const handleDeleteId = (id) => {
-    dispatch(deleteDevProjectById(id))
+    dispatch(deleteDesProjectById(id))
       .then((result) => {
         // handle success
         console.log(result);
-        dispatch(getDevProjects());
+        dispatch(getDesProjects());
       })
       .catch((error) => {
         // handle error
@@ -61,28 +61,27 @@ const RenderDevProj = () => {
     // Submit the form data
     form.submit();
   };
-  const sortedProjects = [...devprojects].sort((a, b) => {
+  const sortedProjects = [...desprojects].sort((a, b) => {
     return new Date(b.createdAt) - new Date(a.createdAt);
   });
   // ******************************************************************************
 
   const handleFormSubmit = async (values) => {
     try {
-      const { name, desc, link, github, status, type, stacks } = values;
+      const { name, desc, link,  status, type, stacks } = values;
 
       const formData = new FormData();
       formData.append('name', name);
       formData.append('desc', desc);
       formData.append('link', link);
-      formData.append('github', github);
       formData.append('status', status);
       formData.append('type', type);
       formData.append('stacks', stacks);
 
       await dispatch(
-        updateDevProject({ id: editingProject._id, formData })
+        updateDesProject({ id: editingProject._id, formData })
       ).unwrap();
-      dispatch(getDevProjects());
+      dispatch(getDesProjects());
       setSuccess(true);
       setTimeout(() => {
         setSuccess(false);
@@ -140,9 +139,7 @@ const RenderDevProj = () => {
           <Form.Item label='Link to site' name='link'>
             <Input />
           </Form.Item>
-          <Form.Item label='Github' name='github'>
-            <Input />
-          </Form.Item>
+          
           <Form.Item label='Status' name='status'>
             <Select>
               <Select.Option value='false' name='status'>
@@ -153,22 +150,22 @@ const RenderDevProj = () => {
               </Select.Option>
             </Select>
           </Form.Item>
+          <Form.Item label='Type' name='type'>
+          <Select>
+            <Select.Option value='ui'>UI</Select.Option>
+            <Select.Option value='ux'>UX</Select.Option>
+            <Select.Option value='combined'>Combined</Select.Option>
+          </Select>
+        </Form.Item>
           <Form.Item label='Stacks' name='stacks'>
             <Checkbox.Group
               options={[
-                { label: 'HTML', value: 'html' },
-                { label: 'CSS', value: 'css' },
-                { label: 'TailwindCSS', value: 'tailwind' },
-                { label: 'Javascript', value: 'javascript' },
-                { label: 'React', value: 'react' },
-                { label: 'ReactNative', value: 'react-native' },
-                { label: 'Server', value: 'server' },
-                { label: 'NextJS', value: 'nextjs' },
-                { label: 'NodeJS', value: 'nodejs' },
-                { label: 'Firebase', value: 'firebase' },
-                { label: 'MongoDB', value: 'mongodb' },
-                { label: 'MySQL', value: 'mysql' },
-                { label: 'wordpress', value: 'wordpress' },
+                { label: 'Photoshop', value: 'photoshop' },
+                { label: 'Illustrator', value: 'illustrator' },
+                { label: 'Figma', value: 'figma' },
+                { label: 'XD', value: 'xd' },
+                { label: 'AfterEffects', value: 'aftereffects' },
+                
               ]}
               onChange={handleStacksChange}
               value={selectedStacks}
@@ -201,4 +198,4 @@ const RenderDevProj = () => {
   );
 };
 
-export default RenderDevProj;
+export default RenderDesProj;
