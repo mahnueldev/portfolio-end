@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
+
 import mage from '../assets/images/mage.png';
 import mage2 from '../assets/images/mage2.png';
 import mage3 from '../assets/images/mage3.png';
@@ -55,10 +55,5 @@ const ImageComponent = ({ src, alt, name, edit, remove }) => {
   );
 };
 
-ImageComponent.propTypes = {
-  src: PropTypes.string.isRequired,
-  alt: PropTypes.string.isRequired,
-  name: PropTypes.string.isRequired,
-};
 
 export default ImageComponent;

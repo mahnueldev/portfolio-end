@@ -20,7 +20,7 @@ const Development = () => {
     setShowDeleteModal(false);
   }
   return (
-    <section className='flex justify-between '>
+    <section className='flex xl:flex-row xl:justify-between  sm:flex-col'>
       <div className='w-5/6'>
         <CreateDevForm />
       </div>

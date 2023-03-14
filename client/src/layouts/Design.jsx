@@ -20,11 +20,11 @@ const Design = () => {
     setShowDeleteModal(false);
   }
   return (
-    <section className='flex justify-between '>
-      <div className='w-5/6'>
+    <section className='flex xl:flex-row xl:justify-between  sm:flex-col'>
+      <section className='w-5/6'>
         <CreateDesForm />
-      </div>
-      <div className='w-5/6 flex flex-col items-center overflow-y-auto h-screen '>
+      </section>
+      <section className='w-5/6 flex flex-col items-center overflow-y-auto h-screen '>
         <RenderDesProj />
         {desprojects.length > 0 && (
           <Form.Item>
@@ -39,7 +39,7 @@ const Design = () => {
             </Button>
           </Form.Item>
         )}
-      </div>
+      </section>
       <Modal
         title="Delete confirmation"
         visible={showDeleteModal}

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 const url = 'http://localhost:8080';
 
-// Fetch all dev projects
+// Fetch all des projects
 export const getDesProjects = createAsyncThunk(
   'desprojects/getDesProjects',
   async () => {
@@ -13,7 +13,7 @@ export const getDesProjects = createAsyncThunk(
 );
 
 
-// Create a new dev project
+// Create a new des project
 export const createDesProject = createAsyncThunk(
   'desprojects/addDesProject',
   async ({ formData, config }) => {
@@ -40,7 +40,7 @@ export const deleteDesProjectById = createAsyncThunk(
   }
 );
 
-// Delete all dev projects
+// Delete all des projects
 export const deleteAllDesProjects = createAsyncThunk(
   'desprojects/deleteAllDesProjects',
   async () => {
@@ -50,7 +50,7 @@ export const deleteAllDesProjects = createAsyncThunk(
 
 
 export const updateDesProject = createAsyncThunk(
-  'desprojects/updateDevProject',
+  'desprojects/updateDesProject',
   async ({ id, formData }) => {
     console.log('Editing des project with ID:', id);
     try {
@@ -101,8 +101,8 @@ export const desprojectSlice = createSlice({
       })
       .addCase(createDesProject.fulfilled, (state, action) => {
         state.loading = false;
-        state.devproject = action.payload;
-        console.log(state.devproject);
+        state.desproject = action.payload;
+        console.log(state.desproject);
       })
       .addCase(createDesProject.rejected, (state, action) => {
         state.loading = false;
@@ -130,7 +130,7 @@ export const desprojectSlice = createSlice({
         state.loading = true;
       })
       .addCase(deleteAllDesProjects.fulfilled, (state) => {
-        state.devprojects = [];
+        state.desprojects = [];
         state.loading = false;
         state.error = null;
       })
@@ -161,5 +161,5 @@ export const desprojectSlice = createSlice({
     
   },
 });
-// export const { existingData } = devprojectSlice.actions;
+// export const { existingData } = desprojectSlice.actions;
 export default desprojectSlice.reducer;

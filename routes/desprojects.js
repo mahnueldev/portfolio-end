@@ -15,7 +15,7 @@ const baseUrl = 'http://localhost:8080/';
 router.post('/', singleUpload('file'), async (req, res) => {
   try {
     const file = req.file;
-    // Create a new dev project with the request body and uploaded image URL
+    // Create a new des project with the request body and uploaded image URL
     const newDesproject = new Desproject({
       id: req.body.id,
       name: req.body.name,
@@ -28,12 +28,12 @@ router.post('/', singleUpload('file'), async (req, res) => {
       type: req.body.type,
     });
 
-    // Save the new dev project to the database
+    // Save the new des project to the database
     try {
       const savedDesproject = await newDesproject.save();
       res.json(savedDesproject);
     } catch (err) {
-      // If there was an error saving the dev project, delete the uploaded image
+      // If there was an error saving the des project, delete the uploaded image
       fs.unlinkSync(file.path);
       res.status(400).json({ msg: 'Failed to save des project: ' + err });
     }
@@ -56,12 +56,12 @@ router.put('/:id', async (req, res) => {
     const desprojectId = new mongoose.Types.ObjectId(req.params.id);
     const desproject = await Desproject.findById(desprojectId);
 
-    // Find the dev project by ID
+    // Find the des project by ID
     if (!desproject) {
       return res.status(404).json({ msg: 'Des project not found' });
     }
 
-    // Update the dev project
+    // Update the des project
     const { name, desc, link, status, stacks, type } = req.body;
     desproject.name = name;
     desproject.desc = desc;
@@ -114,14 +114,14 @@ router.delete('/:id', async (req, res) => {
     }
 
     const desprojectId = new mongoose.Types.ObjectId(req.params.id);
-    const desproject = await Devproject.findById(desprojectId);
+    const desproject = await Desproject.findById(desprojectId);
 
-    // Find the dev project by ID
+    // Find the des project by ID
     if (!desproject) {
-      return res.status(404).json({ msg: 'Dev project not found' });
+      return res.status(404).json({ msg: 'Des project not found' });
     }
 
-    // Delete the dev project from the database
+    // Delete the des project from the database
     await Desproject.findByIdAndRemove(req.params.id);
 
     // Delete the file from the uploads folder

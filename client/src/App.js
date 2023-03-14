@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import './App.css';
+import { Button, ConfigProvider, theme } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from './features/auth/authSlice';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
@@ -16,6 +17,15 @@ function App() {
   const user = useSelector((state) => state.auth.user);
 
   return (
+    <ConfigProvider
+    theme={{
+      
+      token: {
+        colorPrimary: 'hsl(185,69%,54%)',
+      },
+      
+    }}
+  >
     <BrowserRouter>
       <Routes>
       {/* <Route path='/' element={ <Home /> } /> */}
@@ -26,6 +36,7 @@ function App() {
       <Route exact path='/design' element={ <Design /> } />
       </Routes>
     </BrowserRouter>
+    </ConfigProvider>
   );
 }
 
