@@ -25,6 +25,7 @@ const CreateDevForm = () => {
       const { name, desc, link, github, status, type, stacks, file } = values;
 
       const formData = new FormData();
+     
       formData.append('name', name);
       formData.append('desc', desc);
       formData.append('link', link);
@@ -34,13 +35,7 @@ const CreateDevForm = () => {
       formData.append('stacks', stacks);
       formData.append('file', file[0].originFileObj);
 
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      };
-
-      await dispatch(createDevProject({ formData, config })).unwrap();
+      await dispatch(createDevProject({ formData })).unwrap();
       dispatch(getDevProjects());
       setSuccess(true);
       setTimeout(() => {
@@ -70,10 +65,10 @@ const CreateDevForm = () => {
         onFinish={handleFormSubmit} // Add onFinish callback to Form
         onFinishFailed={onFinishFailed}
       >
-        <Form.Item label='Name' name='name'>
+        <Form.Item label='Name' name='name' rules={[{ required: true, message: 'Please enter a name' }]}>
           <Input />
         </Form.Item>
-        <Form.Item label='Description' name='desc'>
+        <Form.Item label='Description' name='desc' rules={[{ required: true, message: 'Please enter a description' }]}>
           <TextArea rows={4} />
         </Form.Item>
 
@@ -106,12 +101,18 @@ const CreateDevForm = () => {
               { label: 'HTML', value: 'html' },
               { label: 'CSS', value: 'css' },
               { label: 'TailwindCSS', value: 'tailwind' },
+              { label: 'Bootstrap', value: 'bootstrap' },
               { label: 'Javascript', value: 'javascript' },
               { label: 'React', value: 'react' },
+              { label: 'Vue', value: 'vue' },
               { label: 'ReactNative', value: 'react-native' },
               { label: 'Server', value: 'server' },
               { label: 'NextJS', value: 'nextjs' },
               { label: 'NodeJS', value: 'nodejs' },
+              { label: 'PHP', value: 'php' },
+              { label: 'Laravel', value: 'laravel' },
+              { label: 'C#', value: 'c#' },
+              { label: '.NET', value: '.net' },
               { label: 'Firebase', value: 'firebase' },
               { label: 'MongoDB', value: 'mongodb' },
               { label: 'MySQL', value: 'mysql' },

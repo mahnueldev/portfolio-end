@@ -22,7 +22,7 @@ const CreateDesForm = () => {
 
   const handleFormSubmit = async (values) => {
     try {
-      const { name, desc, link,  status,  type, stacks, file } = values;
+      const { name, desc, link, status, type, stacks, file } = values;
 
       const formData = new FormData();
       formData.append('name', name);
@@ -33,13 +33,7 @@ const CreateDesForm = () => {
       formData.append('stacks', stacks);
       formData.append('file', file[0].originFileObj);
 
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      };
-
-      await dispatch(createDesProject({ formData, config })).unwrap();
+      await dispatch(createDesProject({ formData })).unwrap();
       dispatch(getDesProjects());
       setSuccess(true);
       setTimeout(() => {
@@ -79,7 +73,7 @@ const CreateDesForm = () => {
         <Form.Item label='Link to site' name='link'>
           <Input />
         </Form.Item>
-     
+
         <Form.Item label='Status' name='status'>
           <Select>
             <Select.Option value='false' name='status'>
@@ -101,11 +95,11 @@ const CreateDesForm = () => {
         <Form.Item label='Stacks' name='stacks'>
           <Checkbox.Group
             options={[
-                { label: 'Photoshop', value: 'photoshop' },
-                { label: 'Illustrator', value: 'illustrator' },
-                { label: 'Figma', value: 'figma' },
-                { label: 'XD', value: 'xd' },
-                { label: 'AfterEffects', value: 'aftereffects' },
+              { label: 'Photoshop', value: 'photoshop' },
+              { label: 'Illustrator', value: 'illustrator' },
+              { label: 'Figma', value: 'figma' },
+              { label: 'XD', value: 'xd' },
+              { label: 'AfterEffects', value: 'aftereffects' },
             ]}
             onChange={handleStacksChange}
             value={selectedStacks}

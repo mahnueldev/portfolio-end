@@ -2,6 +2,7 @@ import { createAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const url = 'http://localhost:8080';
+// const url = 'https://api.mahnuel.com';
 
 // Fetch all dev projects
 export const getDevProjects = createAsyncThunk(
@@ -15,14 +16,21 @@ export const getDevProjects = createAsyncThunk(
 
 // Create a new dev project
 export const createDevProject = createAsyncThunk(
-  'devprojects/addDevProject',
-  async ({ formData, config }) => {
-    const { data } = await axios.post(
-      `${url}/api/devprojects`,
-      formData,
-      config
-    );
-    return data;
+  'devprojects/addDesProject',
+  async ({ formData }) => {
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      };
+      const response = await axios.post(`${url}/api/devprojects`, formData, config);
+      
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return error.response.data;
+    }
   }
 );
 
@@ -48,17 +56,7 @@ export const deleteAllDevProjects = createAsyncThunk(
   }
 );
 
-// Update a dev project
-// export const updateDevProject = createAsyncThunk(
-//   'devprojects/updateDevProject',
-//   async (devproject) => {
-//     const { data } = await axios.put(
-//       `${url}/api/devprojects/${devproject.id}`,
-//       devproject
-//     );
-//     return data;
-//   }
-// );
+
 export const updateDevProject = createAsyncThunk(
   'devprojects/updateDevProject',
   async ({ id, formData }) => {

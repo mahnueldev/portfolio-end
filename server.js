@@ -1,3 +1,4 @@
+const path = require('path');
 const connectDB = require('./config/db');
 const express = require('express');
 const app = express();
@@ -13,6 +14,12 @@ const {accessLogMiddleware, errorLogMiddleware } = require('./middleware/morganW
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads'));
+// const buildPath = path.join(__dirname, '..', 'client/build/');
+// app.use(express.static(buildPath));
+// // Get Route
+// app.get('*', (req, res) => {
+//   res.sendFile(path.join(buildPath, 'index.html'));
+// });
 // Connect to MongoDB
 connectDB();
 // Cross Origin Resource Sharing

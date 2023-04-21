@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import './App.css';
-import { Button, ConfigProvider, theme } from 'antd';
+import {  ConfigProvider } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from './features/auth/authSlice';
 import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';

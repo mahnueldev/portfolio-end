@@ -2,6 +2,7 @@ import { createAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
 const url = 'http://localhost:8080';
+// const url = 'https://api.mahnuel.com';
 
 // Fetch all des projects
 export const getDesProjects = createAsyncThunk(
@@ -16,13 +17,21 @@ export const getDesProjects = createAsyncThunk(
 // Create a new des project
 export const createDesProject = createAsyncThunk(
   'desprojects/addDesProject',
-  async ({ formData, config }) => {
-    const { data } = await axios.post(
-      `${url}/api/desprojects`,
-      formData,
-      config
-    );
-    return data;
+  async ({ formData }) => {
+    try {
+      const config = {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+          'Accept': 'application/json'
+        }
+      };
+      const response = await axios.post(`${url}/api/desprojects`, formData, config);
+      
+      return response.data;
+    } catch (error) {
+      console.log(error);
+      return error.response.data;
+    }
   }
 );
 

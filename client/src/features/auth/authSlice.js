@@ -3,11 +3,13 @@ import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
 
 const url = 'http://localhost:8080';
+// const url = 'https://api.mahnuel.com';
 
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials, thunkAPI) => {
     try {
+      
       const response = await axios.post(`${url}/api/auth`, credentials);
       return response.data;
     } catch (error) {
@@ -21,7 +23,7 @@ export const clearError = createAction('auth/clearError');
 export const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: {},
+    user: {email: 'emmanuel', password: '6354'},
     loading: false,
     error: null,
   },
@@ -46,7 +48,7 @@ export const authSlice = createSlice({
       })
       .addCase(login.rejected, (state, action) => {
         state.loading = false;
-        state.error = action.payload.msg;
+        state.error = action.error.msg
       })
       .addCase(clearError, (state) => {
         state.error = null;

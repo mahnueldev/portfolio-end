@@ -9,7 +9,8 @@ const FormComp = () => {
   const [credentials, setCredentials] = useState({ email: '', password: '' });
 
   const handleSubmit = (values) => {
-    dispatch(login(values));
+    // dispatch(login(values));
+    dispatch(login(credentials));
   };
 
   const handleChange = (e) => {
