@@ -1,8 +1,8 @@
 import { createAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-const url = 'http://localhost:8080';
-// const url = 'https://api.mahnuel.com';
+// const url = 'http://localhost:8080';
+const url = 'https://api.mahnuel.com';
 
 // Fetch all dev projects
 export const getDevProjects = createAsyncThunk(

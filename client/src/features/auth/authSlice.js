@@ -2,8 +2,8 @@ import { createAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
 
-const url = 'http://localhost:8080';
-// const url = 'https://api.mahnuel.com';
+// const url = 'http://localhost:8080';
+const url = 'https://api.mahnuel.com';
 
 export const login = createAsyncThunk(
   'auth/login',
@@ -23,7 +23,7 @@ export const clearError = createAction('auth/clearError');
 export const authSlice = createSlice({
   name: 'auth',
   initialState: {
-    user: {email: 'emmanuel', password: '6354'},
+    user: null,
     loading: false,
     error: null,
   },
