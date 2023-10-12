@@ -30,15 +30,15 @@ const sideNav = [
 const topNav = [
   {
     id: uuidv4(),
-    label: 'User',
+    label: 'Profile',
     icon: <UserOutlined/>,
-    to: '#',
+    to: '/profile',
   },
   {
     id: uuidv4(),
-    label: 'Calender',
+    label: 'Certifications',
     icon: <UserOutlined />,
-    to: '#',
+    to: '/certifications',
   },
   
 ];

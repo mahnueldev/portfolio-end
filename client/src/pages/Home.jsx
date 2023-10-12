@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { Breadcrumb, Layout, Menu, theme, Button } from 'antd';
+import { Breadcrumb, Layout, Menu, Button } from 'antd';
 import { sideNav, topNav } from '../assets/data/nav-items';
 import logo from '../assets/images/EEE192.png';
-import { Dashboard, Development, Design } from '../layouts';
+import {
+  Dashboard,
+  Development,
+  Design,
+  Profile,
+  Certifications,
+} from '../layouts';
 import { Link } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { clearUser } from '../features/auth/authSlice';
@@ -41,6 +47,12 @@ const Home = () => {
       case 'design':
         console.log('Rendered Component: Design');
         return <Design />;
+      case 'profile':
+        console.log('Rendered Component: Profile');
+        return <Profile />;
+      case 'certifications':
+        console.log('Rendered Component: Certifications');
+        return <Certifications />;
       default:
         return 'null';
     }
@@ -51,7 +63,8 @@ const Home = () => {
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
-      >
+          className='bg-red-500'
+        >
         <div style={{ position: 'fixed', left: 0, top: 0, bottom: 0 }}>
           <div className='flex items-center justify-center'>
             <img src={logo} alt='' className='w-16 p-4 ' />
@@ -74,32 +87,38 @@ const Home = () => {
         </div>
       </Sider>
       <Layout className='site-layout'>
-        <Header
-          className='flex items-center bg-blue-400 w-full space-x-80'
-          style={{
-            padding: 0,
-
-            position: 'fixed',
-            zIndex: 1,
-            width: '100%',
-          }}
+      {/* Top Nav start */}
+      <Header
+          className='flex items-center justify-between bg-blue-400 w-full  fixed  z-10'
+          
         >
+      
           <Menu
             theme='dark'
             mode='horizontal'
-            defaultSelectedKeys={['2']}
-            items={topNav}
-          />
+            onSelect={onMenuSelect}
+            selectedKeys={[selectedMenuItem]}
+          >
+            {topNav.map((item, i) => (
+              <Menu.Item key={item.label} icon={collapsed ? item.icon : null}>
+                <Link to={item.path}>
+                  {!collapsed &&
+                    item.label.slice(0, 1).toUpperCase() + item.label.slice(1)}
+                </Link>
+              </Menu.Item>
+            ))}
+          </Menu>
           <Button
             type='primary'
             htmlType='submit'
-            className='bg-orange-300'
+            className='bg-orange-300 mr-52'
             onClick={handleLogout}
           >
             Logout
           </Button>
         </Header>
-        <Content style={{ margin: '80px 50px' }}>
+        {/* Top Nav end */}
+        <Content style={{ margin: '80px 20px' }}>
           <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item>{selectedMenuItem}</Breadcrumb.Item>
           </Breadcrumb>

@@ -7,12 +7,13 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const corsOptions = {
-  origin: process.env.ALLOWED_ORIGINS.split(','),
-  optionsSuccessStatus: 200,
-  allowedHeaders: ['Content-Type', 'Authorization', 'x-auth-token', 'x-api-key', 'x-api-host'],
-  methods: 'GET,POST,PUT,DELETE',
-  credentials: true,
-  preflightContinue: false,
-};
+    origin: process.env.ALLOWED_ORIGINS.split(','),
+    optionsSuccessStatus: 200,
+    allowedHeaders: ['Content-Type', 'x-auth-token'],
+    methods: 'GET,POST,PUT,DELETE',
+    credentials: true,
+    preflightContinue: false,
+  };
+console.log(process.env.ALLOWED_ORIGINS);
 
 module.exports = corsOptions;

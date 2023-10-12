@@ -98,25 +98,33 @@ const CreateDevForm = () => {
         <Form.Item label='Stacks' name='stacks'>
           <Checkbox.Group
             options={[
+              { label: 'Wordpress', value: 'wordpress' },
               { label: 'HTML', value: 'html' },
               { label: 'CSS', value: 'css' },
               { label: 'TailwindCSS', value: 'tailwind' },
               { label: 'Bootstrap', value: 'bootstrap' },
               { label: 'Javascript', value: 'javascript' },
               { label: 'React', value: 'react' },
+              { label: 'NextJS', value: 'nextjs' },
               { label: 'Vue', value: 'vue' },
               { label: 'ReactNative', value: 'react-native' },
-              { label: 'Server', value: 'server' },
-              { label: 'NextJS', value: 'nextjs' },
               { label: 'NodeJS', value: 'nodejs' },
               { label: 'PHP', value: 'php' },
               { label: 'Laravel', value: 'laravel' },
               { label: 'C#', value: 'c#' },
               { label: '.NET', value: '.net' },
+              { label: 'GO', value: 'go' },
+              { label: 'ApacheServer', value: 'apacheserver' },
               { label: 'Firebase', value: 'firebase' },
               { label: 'MongoDB', value: 'mongodb' },
               { label: 'MySQL', value: 'mysql' },
-              { label: 'wordpress', value: 'wordpress' },
+              { label: 'Postgres', value: 'postgres' },
+              { label: 'SQLServer', value: 'sqlserver' },
+              { label: 'Git', value: 'git' },
+              { label: 'Docker', value: 'docker' },
+              { label: 'Kubernetes', value: 'kubernetes' },
+              { label: 'Azure', value: 'azure' },
+              { label: 'AWS', value: 'aws' },
             ]}
             onChange={handleStacksChange}
             value={selectedStacks}

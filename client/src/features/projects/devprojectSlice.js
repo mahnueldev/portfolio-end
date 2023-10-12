@@ -1,14 +1,14 @@
 import { createAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
-// const url = 'http://localhost:8080';
-const url = 'https://api.mahnuel.com';
+const url = 'http://localhost:8080';
+// const url = 'https://api.mahnuel.com';
 
 // Fetch all dev projects
 export const getDevProjects = createAsyncThunk(
-  'devprojects/getDevProjects',
+  'devproject/getDevProjects',
   async () => {
-    const { data } = await axios.get(`${url}/api/devprojects/`);
+    const { data } = await axios.get(`${url}/api/devproject`);
     return data;
   }
 );
@@ -16,7 +16,7 @@ export const getDevProjects = createAsyncThunk(
 
 // Create a new dev project
 export const createDevProject = createAsyncThunk(
-  'devprojects/addDesProject',
+  'devproject/addDesProject',
   async ({ formData }) => {
     try {
       const config = {
@@ -24,7 +24,7 @@ export const createDevProject = createAsyncThunk(
           'Content-Type': 'multipart/form-data'
         }
       };
-      const response = await axios.post(`${url}/api/devprojects`, formData, config);
+      const response = await axios.post(`${url}/api/devproject`, formData, config);
       
       return response.data;
     } catch (error) {
@@ -35,11 +35,11 @@ export const createDevProject = createAsyncThunk(
 );
 
 export const deleteDevProjectById = createAsyncThunk(
-  'devprojects/deleteDevProjectById',
+  'devproject/deleteDevProjectById',
   async (id, thunkAPI) => {
     console.log('Deleting dev project with ID:', id);
     try {
-      await axios.delete(`${url}/api/devprojects/${id}`);
+      await axios.delete(`${url}/api/devproject/${id}`);
       return id;
     } catch (error) {
       console.log(error);
@@ -50,20 +50,20 @@ export const deleteDevProjectById = createAsyncThunk(
 
 // Delete all dev projects
 export const deleteAllDevProjects = createAsyncThunk(
-  'devprojects/deleteAllDevProjects',
+  'devproject/deleteAllDevProjects',
   async () => {
-    await axios.delete(`${url}/api/devprojects/`);
+    await axios.delete(`${url}/api/devproject/`);
   }
 );
 
 
 export const updateDevProject = createAsyncThunk(
-  'devprojects/updateDevProject',
+  'devproject/updateDevProject',
   async ({ id, formData }) => {
     console.log('Editing dev project with ID:', id);
     try {
       const config = { headers: { 'Content-Type': 'application/json' } };
-      const response = await axios.put(`${url}/api/devprojects/${id}`, formData, config);
+      const response = await axios.put(`${url}/api/devproject/${id}`, formData, config);
       
       return response.data;
     } catch (error) {

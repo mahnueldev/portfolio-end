@@ -1,20 +1,20 @@
 const fs = require('fs');
 const path = require('path');
-const express = require('express');
-const router = express.Router();
-const { singleUpload } = require('../middleware/multerConn');
 const Desproject = require('../models/Desproject');
 const multer = require('multer');
 const mongoose = require('mongoose');
 
+const dotenv = require('dotenv');
 
-const baseUrl = 'http://localhost:8080/';
-// const baseUrl = 'https://api.mahnuel.com/';
+if (process.env.NODE_ENV === 'development') {
+  dotenv.config({ path: '.env.development.local' });
+} else {
+  dotenv.config({ path: '.env.production.local' });
+}
 
-// url: 'http://localhost:8080/uploads/' + file.filename,
+const baseUrl = process.env.BASE_URL
 
-// create main Model
-router.post('/', singleUpload('file'), async (req, res) => {
+const createProj = async (req, res) => {
   try {
     const file = req.file;
     // Create a new des project with the request body and uploaded image URL
@@ -46,10 +46,10 @@ router.post('/', singleUpload('file'), async (req, res) => {
       res.status(400).json({ msg: 'Failed to create des project: ' + err });
     }
   }
-});
+};
 
 // Update Route
-router.put('/:id', async (req, res) => {
+const updateProj = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(404).json({ msg: 'Invalid ID' });
@@ -79,10 +79,10 @@ router.put('/:id', async (req, res) => {
     console.error(err);
     res.status(500).json({ msg: 'Server error' });
   }
-});
+};
 
 // Get Route by ID
-router.get('/:id', async (req, res) => {
+const getProj = async (req, res) => {
   try {
     const desProject = await Desproject.findById(req.params.id);
 
@@ -95,10 +95,10 @@ router.get('/:id', async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
-});
+};
 
 // Get All Route
-router.get('/', async (req, res) => {
+const getAllProj = async (req, res) => {
   try {
     const desprojects = await Desproject.find();
     res.json(desprojects);
@@ -106,10 +106,10 @@ router.get('/', async (req, res) => {
     console.error(err.message);
     res.status(500).send('Server Error');
   }
-});
+};
 
 // Delete single project
-router.delete('/:id', async (req, res) => {
+const delProj = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
       return res.status(404).json({ msg: 'Invalid ID' });
@@ -137,10 +137,10 @@ router.delete('/:id', async (req, res) => {
     console.error(err);
     res.status(500).json({ msg: 'Server error' });
   }
-});
+};
 
 // Delete all projects
-router.delete('/', async (req, res) => {
+const delAllProj = async (req, res) => {
   try {
     const result = await Desproject.deleteMany({});
     const deletedCount = result.deletedCount;
@@ -157,6 +157,6 @@ router.delete('/', async (req, res) => {
     console.error(err);
     res.status(500).json({ msg: 'Server error' });
   }
-});
+};
 
-module.exports = router;
+module.exports = {createProj, updateProj, getAllProj, getProj, delProj, delAllProj};

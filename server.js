@@ -10,6 +10,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const logger = require('./middleware/logger');
 const {accessLogMiddleware, errorLogMiddleware } = require('./middleware/morganWare');
+const verifyAuth = require('./middleware/verifyAuth');
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
@@ -35,11 +36,13 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/users', require('./routes/users'));
 app.use('/api/auth', require('./routes/auth'));
-app.use('/api/devprojects', require('./routes/devprojects'));
-app.use('/api/desprojects', require('./routes/desprojects'));
+app.use('/api/register', require('./routes/register'));
+app.use('/api/devproject', require('./routes/devproject'));
+app.use('/api/desproject', require('./routes/desproject'));
 
+app.use(verifyAuth);
+app.use('/api/user', require('./routes/user'));
 //server
 mongoose.connection.once('open', () => {
   console.log('Connected to MongoDB');

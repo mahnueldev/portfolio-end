@@ -4,4 +4,5 @@ export { default as CreateDevForm} from './CreateDevForm';
 export { default as CreateDesForm} from './CreateDesForm';
 export { default as CountDes} from './CountDes';
 export { default as CountDev} from './CountDev';
+export { default as CountCert} from './CountCert';
 export { default as ImageComponent} from './ImageComponent';
