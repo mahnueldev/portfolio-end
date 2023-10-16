@@ -1,14 +1,13 @@
 import { createAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+import { axiosPrivate} from '../hooks/axiosInstance';
 
-const url = 'http://localhost:8080';
-// const url = 'https://api.mahnuel.com';
+
 
 // Fetch all cert projects
 export const getCerts = createAsyncThunk(
   'cert/getCerts',
   async () => {
-    const { data } = await axios.get(`${url}/api/cert/`);
+    const { data } = await axiosPrivate.get(`/cert/`);
     return data;
   }
 );
@@ -25,7 +24,7 @@ export const newCert = createAsyncThunk(
           'Accept': 'application/json'
         }
       };
-      const response = await axios.post(`${url}/api/cert`, formData, config);
+      const response = await axiosPrivate.post(`/cert`, formData, config);
       
       return response.data;
     } catch (error) {
@@ -40,7 +39,7 @@ export const deleteCertById = createAsyncThunk(
   async (id, thunkAPI) => {
     console.log('Deleting cert with ID:', id);
     try {
-      await axios.delete(`${url}/api/cert/${id}`);
+      await axiosPrivate.delete(`/cert/${id}`);
       return id;
     } catch (error) {
       console.log(error);
@@ -53,7 +52,7 @@ export const deleteCertById = createAsyncThunk(
 export const deleteAllCerts = createAsyncThunk(
   'cert/deleteAllCerts',
   async () => {
-    await axios.delete(`${url}/api/cert/`);
+    await axiosPrivate.delete(`/cert/`);
   }
 );
 
@@ -64,7 +63,7 @@ export const updateCert = createAsyncThunk(
     console.log('Editing cert with ID:', id);
     try {
       const config = { headers: { 'Content-Type': 'application/json' } };
-      const response = await axios.put(`${url}/api/cert/${id}`, formData, config);
+      const response = await axiosPrivate.put(`/cert/${id}`, formData, config);
       
       return response.data;
     } catch (error) {

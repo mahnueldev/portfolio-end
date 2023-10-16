@@ -21,6 +21,7 @@ const DesprojectSchema = mongoose.Schema(
     },
     link: {
       type: String,
+      default: null,
     },
     status: {
       type: Boolean,

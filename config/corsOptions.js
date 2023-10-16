@@ -14,6 +14,6 @@ const corsOptions = {
     credentials: true,
     preflightContinue: false,
   };
-console.log(process.env.ALLOWED_ORIGINS);
+// console.log(process.env.ALLOWED_ORIGINS);
 
 module.exports = corsOptions;

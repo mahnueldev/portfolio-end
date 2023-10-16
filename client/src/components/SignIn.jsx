@@ -36,7 +36,7 @@ const FormComp = () => {
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
       style={{ maxWidth: 600 }}
-      autoComplete='off'
+      autoComplete='on'
     >
       {error && <Alert className='mb-4' message={error} type='error' />}
       <Form.Item

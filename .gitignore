@@ -23,4 +23,4 @@ yarn-error.log*
 /config/default.json
 /uploads
 /log
-junk.js
+/temp

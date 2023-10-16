@@ -23,7 +23,7 @@ const createProj = async (req, res) => {
       name: req.body.name,
       filename: file.filename,
       desc: req.body.desc,
-      url: baseUrl + 'uploads/' + file.filename,
+      url: baseUrl + 'uploads/media/' + file.filename,
       link: req.body.link,
       status: req.body.status,
       stacks: req.body.stacks,
@@ -127,7 +127,7 @@ const delProj = async (req, res) => {
     await Desproject.findByIdAndRemove(req.params.id);
 
     // Delete the file from the uploads folder
-    const filePath = path.join(__dirname, '..', 'uploads', desproject.filename);
+    const filePath = path.join(__dirname, '..', 'uploads/media', desproject.filename);
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
     }
@@ -146,7 +146,7 @@ const delAllProj = async (req, res) => {
     const deletedCount = result.deletedCount;
 
     // Delete all files from the uploads folder
-    const dirPath = path.join(__dirname, '..', 'uploads');
+    const dirPath = path.join(__dirname, '..', 'uploads/media');
     const files = fs.readdirSync(dirPath);
     for (const file of files) {
       fs.unlinkSync(path.join(dirPath, file));

@@ -1,16 +1,29 @@
 import { createAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
+// import axios from 'axios';
 import setAuthToken from '../../utils/setAuthToken';
+import { axiosPrivate} from '../hooks/axiosInstance';
 
-const url = 'http://localhost:8080';
-// const url = 'https://api.mahnuel.com';
+
 
 export const login = createAsyncThunk(
   'auth/login',
   async (credentials, thunkAPI) => {
     try {
       
-      const response = await axios.post(`${url}/api/auth`, credentials);
+      const response = await axiosPrivate.post(`/auth`, credentials);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
+
+export const getUser = createAsyncThunk(
+  'user/getUser',
+  async (credentials, thunkAPI) => {
+    try {
+      
+      const response = await axiosPrivate.get(`/user`, credentials);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);
@@ -25,6 +38,7 @@ export const authSlice = createSlice({
   initialState: {
     user: localStorage.getItem('token') || null,
     loading: false,
+    success: false,
     error: null,
   },
   reducers: {
@@ -32,7 +46,7 @@ export const authSlice = createSlice({
       state.user = action.payload;
     },
     clearUser: (state) => {
-      state.user = null;
+      state.user = localStorage.removeItem('token');
     },
   },
   extraReducers: (builder) => {
@@ -52,7 +66,23 @@ export const authSlice = createSlice({
       })
       .addCase(clearError, (state) => {
         state.error = null;
-      });
+      })
+       // getUser
+       .addCase(getUser.pending, (state) => {
+        state.loading = true;
+      })
+      .addCase(getUser.fulfilled, (state, action) => {
+        state.user = action.payload;
+        state.loading = false;
+        state.error = null;
+        state.success = true;
+      })
+      .addCase(getUser.rejected, (state, action) => {
+        state.success = false;
+        state.loading = false;
+        state.error = action.payload;
+        state.user =localStorage.removeItem('token');
+      })
   },
 });
 

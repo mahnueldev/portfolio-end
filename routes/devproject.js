@@ -2,15 +2,15 @@
 
 const express = require('express');
 const router = express.Router();
-const { singleUpload } = require('../middleware/multerConn');
+const { mediaUpload } = require('../middleware/multerConn');
 const {createProj, updateProj, getAllProj, getProj, delProj, delAllProj} = require('../controllers/devProjectController');
 
 // Define the routes and their corresponding controller methods
-router.post('/', singleUpload('file'), createProj);
-router.put('/:id', updateProj);
-router.get('/:id', getProj);
-router.get('/', getAllProj);
-router.delete('/:id',delProj);
-router.delete('/', delAllProj);
+router.post('/devproject', mediaUpload('file'), createProj);
+router.put('/devproject/:id', updateProj);
+router.get('/devproject/:id', getProj);
+router.get('/devprojects', getAllProj);
+router.delete('/devproject/:id',delProj);
+router.delete('/devprojects', delAllProj);
 
 module.exports = router;

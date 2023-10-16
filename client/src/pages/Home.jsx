@@ -10,16 +10,23 @@ import {
   Certifications,
 } from '../layouts';
 import { Link } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
-import { clearUser } from '../features/auth/authSlice';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { clearUser, getUser } from '../features/auth/authSlice';
 
 const { Header, Content, Footer, Sider } = Layout;
 
 const Home = () => {
+  const dispatch = useDispatch();
   const [collapsed, setCollapsed] = useState(false);
   const [selectedMenuItem, setSelectedMenuItem] = useState('dashboard');
+  const { user } = useSelector((state) => state.auth);
 
-  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(getUser());
+  }, [dispatch]);
+
+
   const handleLogout = () => {
     dispatch(clearUser());
   };
@@ -63,8 +70,8 @@ const Home = () => {
         collapsible
         collapsed={collapsed}
         onCollapse={(value) => setCollapsed(value)}
-          className='bg-red-500'
-        >
+        className='bg-red-500'
+      >
         <div style={{ position: 'fixed', left: 0, top: 0, bottom: 0 }}>
           <div className='flex items-center justify-center'>
             <img src={logo} alt='' className='w-16 p-4 ' />
@@ -87,17 +94,13 @@ const Home = () => {
         </div>
       </Sider>
       <Layout className='site-layout'>
-      {/* Top Nav start */}
-      <Header
-          className='flex items-center justify-between bg-blue-400 w-full  fixed  z-10'
-          
-        >
-      
+        {/* Top Nav start */}
+        <Header className='flex items-center justify-between bg-blue-400 w-full  fixed  z-10'>
           <Menu
             theme='dark'
             mode='horizontal'
-            onSelect={onMenuSelect}
             selectedKeys={[selectedMenuItem]}
+            onSelect={onMenuSelect}
           >
             {topNav.map((item, i) => (
               <Menu.Item key={item.label} icon={collapsed ? item.icon : null}>
@@ -108,6 +111,9 @@ const Home = () => {
               </Menu.Item>
             ))}
           </Menu>
+          <section>
+            <p className='text-light-100 text-xl'>WELCOME {user && user.name}</p>
+          </section>
           <Button
             type='primary'
             htmlType='submit'

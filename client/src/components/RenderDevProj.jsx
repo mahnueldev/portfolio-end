@@ -120,6 +120,7 @@ const RenderDevProj = () => {
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
+        okButtonProps={{ style: { background: '#39cddb', color: 'white' } }}
       >
         <Form
           initialValues={editingProject}
@@ -144,14 +145,10 @@ const RenderDevProj = () => {
             <Input />
           </Form.Item>
           <Form.Item label='Status' name='status'>
-            <Select>
-              <Select.Option value='false' name='status'>
-                false
-              </Select.Option>
-              <Select.Option value='true' name='status'>
-                true
-              </Select.Option>
-            </Select>
+          <Select>
+        <Select.Option value={false}>false</Select.Option>
+        <Select.Option value={true}>true</Select.Option>
+      </Select>
           </Form.Item>
           <Form.Item label='Stacks' name='stacks'>
             <Checkbox.Group

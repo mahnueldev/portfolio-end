@@ -6,10 +6,6 @@ const CertSchema = mongoose.Schema(
       type: String,
       required: true
     },
-    desc: {
-      type: String,
-      required: true
-    },
     filename: {
       type: String,
     },

@@ -6,3 +6,5 @@ export { default as CountDes} from './CountDes';
 export { default as CountDev} from './CountDev';
 export { default as CountCert} from './CountCert';
 export { default as ImageComponent} from './ImageComponent';
+export { default as TextEditor} from './TextEditor';
+

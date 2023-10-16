@@ -21,6 +21,7 @@ const DevprojectSchema = mongoose.Schema(
     },
     link: {
       type: String,
+      default: null,
     },
     github: {
       type: String,

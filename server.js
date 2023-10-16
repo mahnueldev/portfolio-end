@@ -38,11 +38,13 @@ app.use(express.urlencoded({ extended: true }));
 // Routes
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/register', require('./routes/register'));
-app.use('/api/devproject', require('./routes/devproject'));
-app.use('/api/desproject', require('./routes/desproject'));
+app.use('/api', require('./routes/devproject'));
+app.use('/api', require('./routes/desproject'));
+app.use('/api', require('./routes/cert'));
 
+app.use('/api', require('./routes/profile'));
 app.use(verifyAuth);
-app.use('/api/user', require('./routes/user'));
+app.use('/api', require('./routes/user'));
 //server
 mongoose.connection.once('open', () => {
   console.log('Connected to MongoDB');

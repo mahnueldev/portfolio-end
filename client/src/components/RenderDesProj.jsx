@@ -119,6 +119,7 @@ const RenderDesProj = () => {
         visible={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
+        okButtonProps={{ style: { background: '#39cddb', color: 'white' } }}
       >
         <Form
           initialValues={editingProject}
@@ -141,14 +142,10 @@ const RenderDesProj = () => {
           </Form.Item>
           
           <Form.Item label='Status' name='status'>
-            <Select>
-              <Select.Option value='false' name='status'>
-                false
-              </Select.Option>
-              <Select.Option value='true' name='status'>
-                true
-              </Select.Option>
-            </Select>
+          <Select>
+        <Select.Option value={false}>false</Select.Option>
+        <Select.Option value={true}>true</Select.Option>
+      </Select>
           </Form.Item>
           <Form.Item label='Type' name='type'>
           <Select>
