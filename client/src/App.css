@@ -32,3 +32,19 @@ button {
 ::-webkit-scrollbar-thumb:hover {
   background: #1677ff;
 }
+/* Ant Design */
+.ant-menu {
+  background-color: transparent; /* Make menu background transparent */
+}
+
+.ant-menu-item {
+  color: #fff; /* Text color */
+}
+
+.ant-menu-item:hover {
+  background-color: rgba(255, 255, 255, 0.2); /* Hover background color */
+}
+
+.ant-menu-item-active {
+  background-color: rgba(0, 0, 0, 0.2); /* Active menu item background color */
+}

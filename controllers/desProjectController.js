@@ -12,18 +12,18 @@ if (process.env.NODE_ENV === 'development') {
   dotenv.config({ path: '.env.production.local' });
 }
 
-const baseUrl = process.env.BASE_URL
+const baseUrl = process.env.BASE_URL;
 
 const createProj = async (req, res) => {
   try {
     const file = req.file;
     // Create a new des project with the request body and uploaded image URL
     const newDesproject = new Desproject({
-      id: req.body.id,
+      userId: req.user.id, // Use authenticated user's ID
       name: req.body.name,
-      filename: file.filename,
+      filename: file ? file.filename : undefined,
       desc: req.body.desc,
-      url: baseUrl + 'uploads/media/' + file.filename,
+      url: file ? baseUrl + 'uploads/media/' + file.filename : undefined,
       link: req.body.link,
       status: req.body.status,
       stacks: req.body.stacks,
@@ -36,7 +36,9 @@ const createProj = async (req, res) => {
       res.json(savedDesproject);
     } catch (err) {
       // If there was an error saving the des project, delete the uploaded image
-      fs.unlinkSync(file.path);
+      if (file) {
+        fs.unlinkSync(file.path);
+      }
       res.status(400).json({ msg: 'Failed to save des project: ' + err });
     }
   } catch (err) {
@@ -48,29 +50,45 @@ const createProj = async (req, res) => {
   }
 };
 
-// Update Route
 const updateProj = async (req, res) => {
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(404).json({ msg: 'Invalid ID' });
-    }
-
-    const desprojectId = new mongoose.Types.ObjectId(req.params.id);
-    const desproject = await Desproject.findById(desprojectId);
+    const userId = req.user.id; // User ID from the authenticated request
+    const desprojectId = req.params.id; // Desproject ID from the URL
 
     // Find the des project by ID
+    const desproject = await Desproject.findById(desprojectId);
+
     if (!desproject) {
       return res.status(404).json({ msg: 'Des project not found' });
     }
 
+    // Check if the des project belongs to the authenticated user
+    if (desproject.userId.toString() !== userId) {
+      return res.status(403).json({ msg: 'Not authorized to update this project' });
+    }
+
     // Update the des project
-    const { name, desc, link, status, stacks, type } = req.body;
-    desproject.name = name;
-    desproject.desc = desc;
-    desproject.link = link;
-    desproject.status = status;
-    desproject.stacks = stacks;
-    desproject.type = type;
+    const { name, desc, link, github, status, stacks } = req.body;
+    const file = req.file;
+
+    desproject.name = name || desproject.name;
+    desproject.desc = desc || desproject.desc;
+    desproject.link = link || desproject.link;
+    desproject.github = github || desproject.github;
+    desproject.status = typeof status !== 'undefined' ? status : desproject.status;
+    desproject.stacks = stacks || desproject.stacks;
+
+    if (file) {
+      // If a new file is uploaded, delete the old file
+      if (desproject.filename) {
+        const oldFilePath = path.join(__dirname, '..', 'uploads/media', desproject.filename);
+        if (fs.existsSync(oldFilePath)) {
+          fs.unlinkSync(oldFilePath);
+        }
+      }
+      desproject.filename = file.filename;
+      desproject.url = baseUrl + 'uploads/media/' + file.filename;
+    }
 
     await desproject.save();
 
@@ -81,13 +99,18 @@ const updateProj = async (req, res) => {
   }
 };
 
-// Get Route by ID
 const getProj = async (req, res) => {
   try {
     const desProject = await Desproject.findById(req.params.id);
 
+    // Check if the des project exists
     if (!desProject) {
       return res.status(404).json({ msg: 'Des project not found' });
+    }
+
+    // Check if the current user is the owner of the des project
+    if (desProject.userId.toString() !== req.user.id) {
+      return res.status(403).json({ msg: 'Unauthorized' });
     }
 
     res.json(desProject);
@@ -97,10 +120,10 @@ const getProj = async (req, res) => {
   }
 };
 
-// Get All Route
 const getAllProj = async (req, res) => {
   try {
-    const desprojects = await Desproject.find();
+    // Get all des projects for the current user
+    const desprojects = await Desproject.find({ userId: req.user.id });
     res.json(desprojects);
   } catch (err) {
     console.error(err.message);
@@ -108,7 +131,6 @@ const getAllProj = async (req, res) => {
   }
 };
 
-// Delete single project
 const delProj = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -118,15 +140,20 @@ const delProj = async (req, res) => {
     const desprojectId = new mongoose.Types.ObjectId(req.params.id);
     const desproject = await Desproject.findById(desprojectId);
 
-    // Find the des project by ID
+    // Check if the des project exists
     if (!desproject) {
       return res.status(404).json({ msg: 'Des project not found' });
+    }
+
+    // Check if the current user is the owner of the des project
+    if (desproject.userId.toString() !== req.user.id) {
+      return res.status(403).json({ msg: 'Unauthorized' });
     }
 
     // Delete the des project from the database
     await Desproject.findByIdAndRemove(req.params.id);
 
-    // Delete the file from the uploads folder
+    // Delete the file from the uploads/media folder
     const filePath = path.join(__dirname, '..', 'uploads/media', desproject.filename);
     if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
@@ -139,13 +166,13 @@ const delProj = async (req, res) => {
   }
 };
 
-// Delete all projects
 const delAllProj = async (req, res) => {
   try {
-    const result = await Desproject.deleteMany({});
+    // Delete all des projects for the current user
+    const result = await Desproject.deleteMany({ userId: req.user.id });
     const deletedCount = result.deletedCount;
 
-    // Delete all files from the uploads folder
+    // Delete all files from the uploads/media folder
     const dirPath = path.join(__dirname, '..', 'uploads/media');
     const files = fs.readdirSync(dirPath);
     for (const file of files) {
@@ -159,4 +186,4 @@ const delAllProj = async (req, res) => {
   }
 };
 
-module.exports = {createProj, updateProj, getAllProj, getProj, delProj, delAllProj};
+module.exports = { createProj, updateProj, getAllProj, getProj, delProj, delAllProj };

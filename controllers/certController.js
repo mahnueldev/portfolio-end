@@ -1,7 +1,4 @@
-const fs = require('fs');
-const path = require('path');
 const Cert = require('../models/Cert');
-const multer = require('multer');
 const mongoose = require('mongoose');
 
 const dotenv = require('dotenv');
@@ -16,36 +13,54 @@ const baseUrl = process.env.BASE_URL;
 
 const uploadCert = async (req, res) => {
   try {
-    const file = req.file;
+    // Create a new certificate with userId
     const newCert = new Cert({
-      id: req.body.id,
       title: req.body.title,
-      filename: file.filename,
-      url: baseUrl + 'uploads/' + file.filename,
+      institute: req.body.institute,
       link: req.body.link,
+      userId: req.user.id
     });
 
     // Save the new cert to the database
-    try {
-      const savedCert = await newCert.save();
-      res.json(savedCert);
-    } catch (err) {
-      // If there was an error saving the cert , delete the uploaded doc
-      fs.unlinkSync(file.path);
-      res.status(400).json({ msg: 'Failed to save cert: ' + err });
-    }
+    const savedCert = await newCert.save();
+    res.json(savedCert);
   } catch (err) {
-    if (err instanceof multer.MulterError) {
-      res.status(400).json({ msg: 'Doc upload error: ' + err.message });
-    } else {
-      res.status(400).json({ msg: 'Failed to upload cert: ' + err });
+    res.status(400).json({ msg: 'Failed to upload certificate: ' + err });
+  }
+};
+
+const updateCert = async (req, res) => {
+  try {
+    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+      return res.status(404).json({ msg: 'Invalid ID' });
     }
+
+    const certId = req.params.id;
+    const cert = await Cert.findOne({ _id: certId, userId: req.user.id });
+
+    // Find the cert by ID and userId
+    if (!cert) {
+      return res.status(404).json({ msg: 'Certificate not found' });
+    }
+
+    // Update the cert
+    const { title, institute, link } = req.body;
+    cert.title = title;
+    cert.institute = institute;
+    cert.link = link;
+
+    await cert.save();
+
+    res.json(cert);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ msg: 'Server error' });
   }
 };
 
 const getCertById = async (req, res) => {
   try {
-    const cert = await Cert.findById(req.params.id);
+    const cert = await Cert.findOne({ _id: req.params.id, userId: req.user.id });
 
     if (!cert) {
       return res.status(404).json({ msg: 'Certificate not found' });
@@ -60,7 +75,7 @@ const getCertById = async (req, res) => {
 
 const getAllCerts = async (req, res) => {
   try {
-    const certs = await Cert.find();
+    const certs = await Cert.find({ userId: req.user.id });
     res.json(certs);
   } catch (err) {
     console.error(err.message);
@@ -74,24 +89,17 @@ const deleteCertById = async (req, res) => {
       return res.status(404).json({ msg: 'Invalid ID' });
     }
 
-    const certId = new mongoose.Types.ObjectId(req.params.id);
-    const cert = await Cert.findById(certId);
+    // Find the certificate by ID and userId
+    const cert = await Cert.findOne({ _id: req.params.id, userId: req.user.id });
 
-    // Find the cert by ID
     if (!cert) {
       return res.status(404).json({ msg: 'Certificate not found' });
     }
 
-    // Delete the cert from the database
+    // Delete the certificate from the database
     await Cert.findByIdAndRemove(req.params.id);
 
-    // Delete the file from the uploads folder
-    const filePath = path.join(__dirname, '..', 'uploads/docs', cert.filename);
-    if (fs.existsSync(filePath)) {
-      fs.unlinkSync(filePath);
-    }
-
-    res.json({ msg: 'Cert and file deleted' });
+    res.json({ msg: 'Cert deleted' });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: 'Server error' });
@@ -100,17 +108,10 @@ const deleteCertById = async (req, res) => {
 
 const deleteAllCert = async (req, res) => {
   try {
-    const result = await Cert.deleteMany({});
+    const result = await Cert.deleteMany({ userId: req.user.id });
+
     const deletedCount = result.deletedCount;
-
-    // Delete all files from the uploads folder
-    const dirPath = path.join(__dirname, '..', 'uploads/docs');
-    const files = fs.readdirSync(dirPath);
-    for (const file of files) {
-      fs.unlinkSync(path.join(dirPath, file));
-    }
-
-    res.json({ msg: `${deletedCount} cert and files deleted` });
+    res.json({ msg: `${deletedCount} certs deleted` });
   } catch (err) {
     console.error(err);
     res.status(500).json({ msg: 'Server error' });
@@ -119,6 +120,7 @@ const deleteAllCert = async (req, res) => {
 
 module.exports = {
   uploadCert,
+  updateCert,
   deleteCertById,
   deleteAllCert,
   getAllCerts,

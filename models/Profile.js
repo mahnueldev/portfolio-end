@@ -2,15 +2,15 @@ const mongoose = require('mongoose');
 
 const ProfileSchema = mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user'
+    },
     about: {
       type: String,
       required: true,
       maxlength: 5000,
     },
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'user'
-    }
   },
   { timestamps: true }
 );

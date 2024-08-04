@@ -9,7 +9,7 @@ if (process.env.NODE_ENV === 'development') {
 const corsOptions = {
     origin: process.env.ALLOWED_ORIGINS.split(','),
     optionsSuccessStatus: 200,
-    allowedHeaders: ['Content-Type', 'x-auth-token'],
+    allowedHeaders: ['Content-Type', 'x-auth-token', 'x-api-key'],
     methods: 'GET,POST,PUT,DELETE',
     credentials: true,
     preflightContinue: false,

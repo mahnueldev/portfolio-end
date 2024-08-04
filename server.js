@@ -15,13 +15,7 @@ const verifyAuth = require('./middleware/verifyAuth');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use('/uploads', express.static('uploads'));
-// const buildPath = path.join(__dirname, '..', 'client/build/');
-// app.use(express.static(buildPath));
-// // Get Route
-// app.get('*', (req, res) => {
-//   res.sendFile(path.join(buildPath, 'index.html'));
-// });
-// Connect to MongoDB
+
 connectDB();
 // Cross Origin Resource Sharing
 app.use(cors(corsOptions));
@@ -36,15 +30,14 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/register', require('./routes/register'));
+app.use('/api', require('./routes/auth'));
+app.use('/api', require('./routes/register'));
 app.use('/api', require('./routes/devproject'));
 app.use('/api', require('./routes/desproject'));
 app.use('/api', require('./routes/cert'));
-
 app.use('/api', require('./routes/profile'));
-app.use(verifyAuth);
-app.use('/api', require('./routes/user'));
+// app.use(verifyAuth);
+app.use('/api/admin', require('./routes/user'));
 //server
 mongoose.connection.once('open', () => {
   console.log('Connected to MongoDB');

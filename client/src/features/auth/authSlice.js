@@ -3,6 +3,17 @@ import { createAction, createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import setAuthToken from '../../utils/setAuthToken';
 import { axiosPrivate} from '../hooks/axiosInstance';
 
+export const signup = createAsyncThunk(
+  'auth/signup',
+  async (credentials, thunkAPI) => {
+    try {
+      const response = await axiosPrivate.post(`/register`, credentials);
+      return response.data;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.response.data);
+    }
+  }
+);
 
 
 export const login = createAsyncThunk(
@@ -51,6 +62,19 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
+    .addCase(signup.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    })
+    .addCase(signup.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+      setAuthToken(action.payload.token);
+    })
+    .addCase(signup.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload ? action.payload.msg : action.error.message;
+    })
       .addCase(login.pending, (state) => {
         state.loading = true;
         state.error = null;

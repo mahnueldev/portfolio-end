@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { CreateDesForm } from '../components';
-import RenderDesProj from '../components/RenderDesProj';
+import { CreateDesForm,RenderDesProj } from '../components';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteAllDesProjects } from '../features/projects/desprojectSlice';
 import { Form, Button, Modal } from 'antd';

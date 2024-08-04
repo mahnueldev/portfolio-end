@@ -1,17 +1,35 @@
 import React, { useState } from 'react';
-import { Button, Checkbox, Form, Input, Alert } from 'antd';
+import { Button, Checkbox, Form, Input, Alert, message } from 'antd';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../features/auth/authSlice';
-import { Link } from 'react-router-dom';
+import { signup } from '../features/auth/authSlice';
+import { useNavigate } from 'react-router-dom';
 
-const FormComp = () => {
-  const dispatch = useDispatch();
+const SignUp = () => {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
   const { error, loading } = useSelector((state) => state.auth);
-  const [credentials, setCredentials] = useState({ email: '', password: '' });
+  const [credentials, setCredentials] = useState({
+    email: '',
+    password: '',
+    confirmPassword: '',
+    name: '',
+  });
 
   const handleSubmit = (values) => {
-    // dispatch(login(values));
-    dispatch(login(credentials));
+    // Ensure passwords match before dispatching the signup action
+    if (credentials.password !== credentials.confirmPassword) {
+      message.error('Passwords do not match!');
+      return;
+    }
+    dispatch(signup(credentials))
+      .unwrap() // Use unwrap to handle the resolved value or error
+      .then(() => {
+        message.success('Registration successful!');
+        navigate('/'); // Redirect to home page on successful registration
+      })
+      .catch(() => {
+        message.error(error.message || 'Registration failed. Please try again.');
+      });
   };
 
   const handleChange = (e) => {
@@ -20,9 +38,10 @@ const FormComp = () => {
 
   const onFinishFailed = () => {
     if (error) {
-      return <Alert message='{error}' type='error' />;
+      return <Alert message={error} type='error' />;
     }
   };
+
   const handleFocus = () => {
     if (error) {
       dispatch({ type: 'auth/clearError' });
@@ -33,13 +52,27 @@ const FormComp = () => {
     <Form
       onFinish={handleSubmit}
       onFinishFailed={onFinishFailed}
-      name='basic'
+      name='signup'
       labelCol={{ span: 8 }}
       wrapperCol={{ span: 16 }}
       style={{ maxWidth: 600 }}
       autoComplete='on'
     >
       {error && <Alert className='mb-4' message={error} type='error' />}
+      
+      <Form.Item
+        label='Name'
+        name='name'
+        rules={[{ required: true, message: 'Please input your name!' }]}
+      >
+        <Input
+          name='name'
+          value={credentials.name}
+          onChange={handleChange}
+          onFocus={handleFocus}
+        />
+      </Form.Item>
+
       <Form.Item
         label='Email'
         name='email'
@@ -67,6 +100,19 @@ const FormComp = () => {
       </Form.Item>
 
       <Form.Item
+        label='Confirm Password'
+        name='confirmPassword'
+        rules={[{ required: true, message: 'Please confirm your password!' }]}
+      >
+        <Input.Password
+          name='confirmPassword'
+          value={credentials.confirmPassword}
+          onChange={handleChange}
+          onFocus={handleFocus}
+        />
+      </Form.Item>
+
+      <Form.Item
         name='remember'
         valuePropName='checked'
         wrapperCol={{ offset: 8, span: 16 }}
@@ -79,16 +125,13 @@ const FormComp = () => {
           type='primary'
           loading={loading}
           htmlType='submit'
-          className='bg-blue-600 block mb-2' // Ensure button is a block element and add margin bottom
+          className='bg-blue-600'
         >
           Submit
         </Button>
-        <Link to='/register' className='block text-center text-blue-500'>
-          Register Instead
-        </Link>
       </Form.Item>
     </Form>
   );
 };
 
-export default FormComp;
+export default SignUp;

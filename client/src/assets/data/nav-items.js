@@ -12,19 +12,22 @@ const sideNav = [
     id: uuidv4(),
     label: 'dashboard',
     icon: <DesktopOutlined />,
-    to: '/',
+    path: '/',
+    roles: ['admin','user']
   },
   {
     id: uuidv4(),
     label: 'development',
     icon: <PieChartOutlined />,
-    to: '/development',
+    path: '/development',
+    roles: ['admin','user']
   },
   {
     id: uuidv4(),
     label: 'design',
     icon: <TeamOutlined/>,
-    to: '/design',
+    path: '/design',
+    roles: ['admin']
   },
 ];
 const topNav = [
@@ -32,13 +35,13 @@ const topNav = [
     id: uuidv4(),
     label: 'profile',
     icon: <UserOutlined/>,
-    to: '/profile',
+    path: '/profile',
   },
   {
     id: uuidv4(),
     label: 'certifications',
     icon: <UserOutlined />,
-    to: '/certifications',
+    path: '/certifications',
   },
   
 ];

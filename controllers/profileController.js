@@ -1,4 +1,4 @@
-const Profile = require('../models/profile');
+const Profile = require('../models/Profile');
 const User = require('../models/User');
 const dotenv = require('dotenv');
 
@@ -11,22 +11,23 @@ if (process.env.NODE_ENV === 'development') {
 const createOrUpdateProfile = async (req, res) => {
   try {
     const { about } = req.body;
-    const userId = req.user.id; 
+    const userId = req.user.id;
 
     const user = await User.findById(userId);
-
     if (!user) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    // Check if the user already has a profile
-    if (!user.profile) {
-      const profile = new Profile({ about, user: user._id });
+    let profile;
+    if (!user.profileId) {
+      // Create new profile if it doesn't exist
+      profile = new Profile({ about, userId: user._id });
       await profile.save();
-      user.profile = profile._id;
+      user.profileId = profile._id;
       await user.save();
     } else {
-      const profile = await Profile.findById(user.profile);
+      // Update existing profile
+      profile = await Profile.findById(user.profileId);
       if (!profile) {
         return res.status(404).json({ message: 'Profile not found' });
       }
@@ -34,52 +35,32 @@ const createOrUpdateProfile = async (req, res) => {
       await profile.save();
     }
 
-    res.json({ message: 'Profile updated successfully' });
+    res.json({ message: 'Profile updated successfully', profile });
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Server error' });
   }
 };
 
-// const getProfile = async (req, res) => {
-//   try {
-//     const userId = req.user.id;
-//     const user = await User.findById(userId);
-
-//     if (!user) {
-//       return res.status(404).json({ message: 'User not found' });
-//     }
-
-//     if (!user.profile) {
-//       return res.status(404).json({ message: 'Profile not found' });
-//     }
-
-//     catch (error) {
-//     console.error(error);
-//     res.status(500).json({ message: 'Server error' });
-//   }
-// };const profile = await Profile.findById(user.profile);
-
-//     if (!profile) {
-//       return res.status(404).json({ message: 'Profile not found' });
-//     }
-
-//     res.json({ profile });
-//   } 
-
 const getProfile = async (req, res) => {
-    try {
-      const profile = await Profile.findOne(); // Find the first profile (you may want to specify a condition if you have multiple profiles)
-  
-      if (!profile) {
-        return res.status(404).json({ message: 'Profile not found' });
-      }
-  
-      res.json(profile); // Return the profile directly
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: 'Server error' });
+  try {
+    const userId = req.user.id;
+    const user = await User.findById(userId);
+
+    if (!user || !user.profileId) {
+      return res.status(404).json({ message: 'Profile not found' });
     }
-  };
+
+    const profile = await Profile.findById(user.profileId);
+    if (!profile) {
+      return res.status(404).json({ message: 'Profile not found' });
+    }
+
+    res.json(profile);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
 
 module.exports = { createOrUpdateProfile, getProfile };

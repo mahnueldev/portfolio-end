@@ -15,9 +15,9 @@ export const createOrUpdateProfile = createAsyncThunk(
 
 export const getProfile = createAsyncThunk(
   'profile/getProfile',
-  async (thunkAPI) => {
+  async (_, thunkAPI) => {
     try {
-      const response = await axiosPrivate.get(`/profile`);
+      const response = await axiosPrivate.get('/profile');
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error.response.data);

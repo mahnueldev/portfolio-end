@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
-import { CreateDevForm } from '../components';
-import RenderDevProj from '../components/RenderDevProj';
+import { CreateDevForm, RenderDevProj  } from '../components';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteAllDevProjects } from '../features/projects/devprojectSlice';
 import { Form, Button, Modal } from 'antd';

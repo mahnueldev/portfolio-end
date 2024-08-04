@@ -17,13 +17,14 @@ const baseUrl = process.env.BASE_URL
 const createProj = async (req, res) => {
   try {
     const file = req.file;
+
     // Create a new dev project with the request body and uploaded image URL
     const newDevproject = new Devproject({
-      id: req.body.id,
+      userId: req.user.id, // Use authenticated user's ID
       name: req.body.name,
-      filename: file.filename,
+      filename: file ? file.filename : undefined,
       desc: req.body.desc,
-      url: baseUrl + 'uploads/media/' + file.filename,
+      url: file ? baseUrl + 'uploads/media/' + file.filename : undefined,
       link: req.body.link,
       github: req.body.github,
       status: req.body.status,
@@ -37,7 +38,9 @@ const createProj = async (req, res) => {
       res.json(savedDevproject);
     } catch (err) {
       // If there was an error saving the dev project, delete the uploaded image
-      fs.unlinkSync(file.path);
+      if (file) {
+        fs.unlinkSync(file.path);
+      }
       res.status(400).json({ msg: 'Failed to save dev project: ' + err });
     }
   } catch (err) {
@@ -49,31 +52,46 @@ const createProj = async (req, res) => {
   }
 };
 
-// Update Route
 const updateProj = async (req, res) => {
   try {
-    if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-      return res.status(404).json({ msg: 'Invalid ID' });
-    }
-    
-    const devprojectId = new mongoose.Types.ObjectId(req.params.id);
-    const devproject = await Devproject.findById(devprojectId);
-    
+    const userId = req.user.id; // User ID from the authenticated request
+    const devprojectId = req.params.id; // Devproject ID from the URL
+
     // Find the dev project by ID
+    const devproject = await Devproject.findById(devprojectId);
+
     if (!devproject) {
       return res.status(404).json({ msg: 'Dev project not found' });
     }
-    
+
+    // Check if the dev project belongs to the authenticated user
+    if (devproject.userId.toString() !== userId) {
+      return res.status(403).json({ msg: 'Not authorized to update this project' });
+    }
+
     // Update the dev project
-    const { name, desc, link, github, status, stacks} = req.body;
-    devproject.name = name;
-    devproject.desc = desc;
-    devproject.link = link;
-    devproject.github = github;
-    devproject.status = status;
-    devproject.stacks = stacks;
-   
-   
+    const { name, desc, link, github, status, stacks } = req.body;
+    const file = req.file;
+
+    devproject.name = name || devproject.name;
+    devproject.desc = desc || devproject.desc;
+    devproject.link = link || devproject.link;
+    devproject.github = github || devproject.github;
+    devproject.status = typeof status !== 'undefined' ? status : devproject.status;
+    devproject.stacks = stacks || devproject.stacks;
+
+    if (file) {
+      // If a new file is uploaded, delete the old file
+      if (devproject.filename) {
+        const oldFilePath = path.join(__dirname, '..', 'uploads/media', devproject.filename);
+        if (fs.existsSync(oldFilePath)) {
+          fs.unlinkSync(oldFilePath);
+        }
+      }
+      devproject.filename = file.filename;
+      devproject.url = baseUrl + 'uploads/media/' + file.filename;
+    }
+
     await devproject.save();
 
     res.json(devproject);
@@ -83,13 +101,19 @@ const updateProj = async (req, res) => {
   }
 };
 
-// Get Route by ID
+
 const getProj = async (req, res) => {
   try {
     const devProject = await Devproject.findById(req.params.id);
 
+    // Check if the dev project exists
     if (!devProject) {
       return res.status(404).json({ msg: 'Dev project not found' });
+    }
+
+    // Check if the current user is the owner of the dev project
+    if (devProject.userId.toString() !== req.user.id) {
+      return res.status(403).json({ msg: 'Unauthorized' });
     }
 
     res.json(devProject);
@@ -99,10 +123,10 @@ const getProj = async (req, res) => {
   }
 };
 
-// Get All Route
 const getAllProj = async (req, res) => {
   try {
-    const devprojects = await Devproject.find();
+    // Get all dev projects for the current user
+    const devprojects = await Devproject.find({ userId: req.user.id });
     res.json(devprojects);
   } catch (err) {
     console.error(err.message);
@@ -110,7 +134,6 @@ const getAllProj = async (req, res) => {
   }
 };
 
-// Delete single project
 const delProj = async (req, res) => {
   try {
     if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
@@ -120,9 +143,14 @@ const delProj = async (req, res) => {
     const devprojectId = new mongoose.Types.ObjectId(req.params.id);
     const devproject = await Devproject.findById(devprojectId);
 
-    // Find the dev project by ID
+    // Check if the dev project exists
     if (!devproject) {
       return res.status(404).json({ msg: 'Dev project not found' });
+    }
+
+    // Check if the current user is the owner of the dev project
+    if (devproject.userId.toString() !== req.user.id) {
+      return res.status(403).json({ msg: 'Unauthorized' });
     }
 
     // Delete the dev project from the database
@@ -141,10 +169,10 @@ const delProj = async (req, res) => {
   }
 };
 
-// Delete all projects
 const delAllProj = async (req, res) => {
   try {
-    const result = await Devproject.deleteMany({});
+    // Delete all dev projects for the current user
+    const result = await Devproject.deleteMany({ userId: req.user.id });
     const deletedCount = result.deletedCount;
 
     // Delete all files from the uploads/media folder
@@ -161,4 +189,4 @@ const delAllProj = async (req, res) => {
   }
 };
 
-module.exports = {createProj, updateProj, getAllProj, getProj, delProj, delAllProj};
+module.exports = { createProj, updateProj, getAllProj, getProj, delProj, delAllProj };

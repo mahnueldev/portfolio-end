@@ -2,6 +2,10 @@ const mongoose = require('mongoose');
 
 const DesprojectSchema = mongoose.Schema(
   {
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'user'
+    },
     name: {
       type: String,
       required: true

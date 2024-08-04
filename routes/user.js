@@ -1,8 +1,10 @@
+// routes/userRoutes.js
 const express = require('express');
 const router = express.Router();
-const { getUser} = require('../controllers/userController');
+const { getUser } = require('../controllers/userController');
+const verifyAuth = require('../middleware/verifyAuth');
 
-// Authenticate user & get token
-router.get('/user',getUser);
+// Get user information (protected route)
+router.get('/admin/user', verifyAuth, getUser);
 
 module.exports = router;

@@ -1,7 +1,8 @@
-const User = require('../models/User'); 
+const User = require('../models/User');
 
 const getUser = async (req, res) => {
   try {
+    console.log('Requesting user ID:', req.user.id); // Debug log
     // Retrieve user information based on the user's ID
     const user = await User.findById(req.user.id).select('-password -date');
 

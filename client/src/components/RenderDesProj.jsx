@@ -116,7 +116,7 @@ const RenderDesProj = () => {
       })}
       <Modal
         title='Edit Project'
-        visible={isModalVisible}
+        open={isModalVisible}
         onOk={handleOk}
         onCancel={handleCancel}
         okButtonProps={{ style: { background: '#39cddb', color: 'white' } }}

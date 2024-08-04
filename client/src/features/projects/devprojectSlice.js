@@ -34,11 +34,11 @@ export const createDevProject = createAsyncThunk(
 
 export const deleteDevProjectById = createAsyncThunk(
   'devproject/deleteDevProjectById',
-  async (id, thunkAPI) => {
-    console.log('Deleting dev project with ID:', id);
+  async (userId, thunkAPI) => {
+    console.log('Deleting dev project with ID:', userId);
     try {
-      await axiosPrivate.delete(`/devproject/${id}`);
-      return id;
+      await axiosPrivate.delete(`/devproject/${userId}`);
+      return userId;
     } catch (error) {
       console.log(error);
       return thunkAPI.rejectWithValue(error.response.data);
@@ -120,10 +120,10 @@ export const devprojectSlice = createSlice({
       .addCase(deleteDevProjectById.fulfilled, (state, action) => {
         state.loading = false;
         const {
-          arg: { id },
+          arg: { userId },
         } = action.meta;
         state.devprojects = state.devprojects.filter(
-          (devproject) => devproject.id !== id
+          (devproject) => devproject.userId !== userId
         );
         state.error = null;
       })
@@ -152,11 +152,11 @@ export const devprojectSlice = createSlice({
         state.loading = false;
         console.log('action', action);
         const {
-          arg: { id },
+          arg: { userId },
         } = action.meta;
-        if (id) {
+        if (userId) {
           state.devprojects = state.devprojects.map((devproject) =>
-            devproject.id === id ? action.payload : devproject
+            devproject.userId === userId ? action.payload : devproject
           );
         }
       })

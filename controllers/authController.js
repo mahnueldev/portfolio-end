@@ -31,7 +31,9 @@ const authenticateUser = async (req, res) => {
 
     const payload = {
       user: {
-        id: user.id
+        id: user._id,
+        name: user.name,
+        role: user.role
       }
     };
 

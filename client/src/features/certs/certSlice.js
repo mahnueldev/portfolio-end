@@ -7,32 +7,22 @@ import { axiosPrivate} from '../hooks/axiosInstance';
 export const getCerts = createAsyncThunk(
   'cert/getCerts',
   async () => {
-    const { data } = await axiosPrivate.get(`/cert/`);
+    const { data } = await axiosPrivate.get(`/certs`);
     return data;
   }
 );
 
 
 // Create a new cert
-export const newCert = createAsyncThunk(
-  'cert/addDesProject',
-  async ({ formData }) => {
-    try {
-      const config = {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-          'Accept': 'application/json'
-        }
-      };
-      const response = await axiosPrivate.post(`/cert`, formData, config);
-      
-      return response.data;
-    } catch (error) {
-      console.log(error);
-      return error.response.data;
-    }
+export const newCert = createAsyncThunk('cert/addCert', async (formParams) => {
+  try {
+    const response = await axiosPrivate.post('/cert', formParams);
+    return response.data;
+  } catch (error) {
+    console.log(error);
+    return error.response.data;
   }
-);
+});
 
 export const deleteCertById = createAsyncThunk(
   'cert/deleteCertById',
@@ -59,11 +49,10 @@ export const deleteAllCerts = createAsyncThunk(
 
 export const updateCert = createAsyncThunk(
   'cert/updateCert',
-  async ({ id, formData }) => {
+  async ({ id, formParams}) => {
     console.log('Editing cert with ID:', id);
     try {
-      const config = { headers: { 'Content-Type': 'application/json' } };
-      const response = await axiosPrivate.put(`/cert/${id}`, formData, config);
+      const response = await axiosPrivate.put(`/cert/${id}`, formParams);
       
       return response.data;
     } catch (error) {
